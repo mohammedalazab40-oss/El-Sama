@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" translate="no" class="notranslate">
 <head>
 <meta charset="UTF-8">
+<meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b3b2e">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,11 +12,11 @@
 <link rel="icon" href="icon.svg">
 <link rel="apple-touch-icon" href="icon.svg">
 <title>El-Sama</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--g1:#0b3b2e;--g2:#14684f;--gold:#d4a24c;--bg:#f3f6f5;--txt:#1d2b26;--mut:#6b7a74}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+body{font-family:'Poppins','Cairo',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
 button,input,select,textarea{font-family:inherit;font-size:15px}
 .hidden{display:none!important}
 
@@ -59,7 +60,7 @@ header h2{font-size:18px;flex:1;font-weight:600}
 .hbtn svg{width:20px;height:20px}
 main{padding:16px 14px 110px;max-width:760px;margin:0 auto}
 nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:8px 6px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -4px 20px rgba(0,0,0,.08);z-index:20;border-radius:20px 20px 0 0}
-nav button{flex:1;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--mut);padding:6px 0;cursor:pointer;font-weight:500}
+nav button{flex:1;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:var(--mut);padding:6px 0;cursor:pointer;font-weight:500}
 nav button svg{width:22px;height:22px}
 nav button.act{color:var(--g2);font-weight:600}
 .hello{margin:2px 4px 14px}.hello b{font-size:18px}.hello small{display:block;color:var(--mut);font-size:12.5px}
@@ -72,7 +73,7 @@ nav button.act{color:var(--g2);font-weight:600}
 .card{background:#fff;border-radius:16px;padding:13px 14px;margin-bottom:10px;box-shadow:0 3px 12px rgba(0,0,0,.05);display:flex;align-items:center;gap:12px;cursor:pointer}
 .av{width:44px;height:44px;border-radius:13px;background:#e8f3ee;color:var(--g2);display:grid;place-items:center;font-weight:700;flex-shrink:0;font-size:13px}
 .info{flex:1;min-width:0}
-.info b{display:block;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info b{unicode-bidi:plaintext;text-align:left;display:block;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .info small{color:var(--mut);font-size:12.5px}
 .end{text-align:right;font-weight:600;font-size:14px;white-space:nowrap}
 .tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
@@ -109,6 +110,12 @@ nav button.act{color:var(--g2);font-weight:600}
 table.st{width:100%;border-collapse:collapse;font-size:13px}
 table.st th,table.st td{padding:8px 5px;border-bottom:1px solid #eef2f0;text-align:left}
 table.st th{color:var(--mut);font-weight:500}
+table.st td{unicode-bidi:plaintext}
+table.st tfoot th{color:var(--txt);font-weight:700;border-top:2px solid #dfe6e2}
+.scroll{overflow-x:auto}
+.rdate{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.rdate input{width:100%;padding:10px;border-radius:12px;border:1px solid #e1e7e4;background:#fff}
+.rdate label{font-size:12px;color:var(--mut)}
 .toast{position:fixed;top:calc(env(safe-area-inset-top) + 16px);left:50%;transform:translateX(-50%);background:#1d2b26;color:#fff;padding:10px 18px;border-radius:12px;z-index:200;font-size:14px;animation:fade .2s;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 </style>
 </head>
@@ -117,7 +124,7 @@ table.st th{color:var(--mut);font-weight:500}
 <!-- ============ Login ============ -->
 <section id="login">
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
-  <form class="lcard" id="lform" autocomplete="on">
+  <div class="lcard" id="lform">
     <div class="logo">
       <svg viewBox="0 0 24 24" fill="none" stroke="#1b1205" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18l-1.6 9.2A2 2 0 0 1 17.4 20H6.6a2 2 0 0 1-2-1.8L3 9z"/><path d="M8 9l3-5M16 9l-3-5"/><path d="M9 13v4M12 13v4M15 13v4"/></svg>
     </div>
@@ -133,10 +140,10 @@ table.st th{color:var(--mut);font-weight:500}
       <button type="button" class="eye" id="eye" aria-label="Show password"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
     <div class="lrow"><label class="chk"><input type="checkbox" id="rem" checked> Remember me</label><span style="opacity:.6">v1.0</span></div>
-    <button class="btn-login" type="submit">Sign In</button>
+    <button class="btn-login" type="button" id="lbtn">Sign In</button>
     <div class="err" id="lerr"></div>
     <div class="lfoot">© El-Sama — All rights reserved</div>
-  </form>
+  </div>
 </section>
 
 <!-- ============ App ============ -->
@@ -154,11 +161,17 @@ table.st th{color:var(--mut);font-weight:500}
     <button data-v="products" onclick="go('products')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/></svg>Stock</button>
     <button data-v="orders" onclick="go('orders')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>Orders</button>
     <button data-v="hotels" onclick="go('hotels')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 9h4a1 1 0 0 1 1 1v11M2 21h20M8 8h3M8 12h3M8 16h3"/></svg>Hotels</button>
+    <button data-v="reports" onclick="go('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3M20 16V6"/></svg>Reports</button>
     <button data-v="settings" onclick="go('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-2.7-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg>Settings</button>
   </nav>
 </section>
 
 <script>
+/* Safe storage: falls back to memory where the browser blocks storage (previews, private mode) */
+const memStore=()=>{const m={};return{getItem:k=>k in m?m[k]:null,setItem:(k,v)=>{m[k]=String(v);},removeItem:k=>{delete m[k];}};};
+const safeStore=n=>{try{const s=window[n];s.setItem('__t','1');s.removeItem('__t');return s;}catch(e){return memStore();}};
+const LS=safeStore('localStorage'), SS=safeStore('sessionStorage');
+
 /* ================= Login settings ================= */
 const USER = 'admin', PASS = '123';
 const APP = 'El-Sama';
@@ -168,6 +181,7 @@ const DONE = 'Delivered', WAIT = 'Pending';
 
 /* ================= Helpers ================= */
 const $ = s => document.querySelector(s);
+const ask = m => { try { const t=Date.now(), r=window.confirm(m); return r || (Date.now()-t<50); } catch(e){ return true; } };
 const num = v => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
 const money = n => num(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2}) + ' ' + CUR;
 const qtyFmt = n => num(n).toLocaleString('en-US',{maximumFractionDigits:3});
@@ -181,13 +195,13 @@ function setDot(s){ $('#dot').className='dot '+(s||''); }
 
 /* ================= Data ================= */
 let DB = {products:[],hotels:[],orders:[],payments:[]};
-function loadCache(){ try{ const d=JSON.parse(localStorage.getItem('gdb')||'null'); if(d) DB=Object.assign({products:[],hotels:[],orders:[],payments:[]},d); }catch{} }
-function saveCache(){ localStorage.setItem('gdb', JSON.stringify(DB)); }
+function loadCache(){ try{ const d=JSON.parse(LS.getItem('gdb')||'null'); if(d) DB=Object.assign({products:[],hotels:[],orders:[],payments:[]},d); }catch{} }
+function saveCache(){ LS.setItem('gdb', JSON.stringify(DB)); }
 function setData(d){ DB = Object.assign({products:[],hotels:[],orders:[],payments:[]}, d||{}); saveCache(); }
 
 const API = {
-  url: () => (localStorage.getItem('gs_url')||'').trim(),
-  token: () => (localStorage.getItem('gs_token')||'').trim(),
+  url: () => (LS.getItem('gs_url')||'').trim(),
+  token: () => (LS.getItem('gs_token')||'').trim(),
   async call(body){
     const r = await fetch(API.url(), {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({...body, token:API.token()})});
     const j = await r.json();
@@ -226,21 +240,22 @@ async function commit(ops, msg){
 
 /* ================= Login ================= */
 $('#eye').onclick = () => { const p=$('#p'); p.type = p.type==='password' ? 'text' : 'password'; };
-$('#lform').onsubmit = e => {
-  e.preventDefault();
+function doLogin(){
   if($('#u').value.trim().toLowerCase()===USER && $('#p').value===PASS){
-    (($('#rem').checked) ? localStorage : sessionStorage).setItem('auth','1');
+    ($('#rem').checked ? LS : SS).setItem('auth','1');
     enterApp();
   } else {
     const c=$('#lform'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake');
     $('#lerr').textContent='Incorrect username or password';
   }
-};
+}
+$('#lbtn').addEventListener('click', doLogin);
+['#u','#p'].forEach(s=>$(s).addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); }));
 function enterApp(){ $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); loadCache(); go('home'); sync(); }
-function logout(){ if(!confirm('Sign out?')) return; localStorage.removeItem('auth'); sessionStorage.removeItem('auth'); location.reload(); }
+function logout(){ if(!ask('Sign out?')) return; LS.removeItem('auth'); SS.removeItem('auth'); location.reload(); }
 
 /* ================= Navigation ================= */
-const TITLES={home:APP,products:'Stock & Items',orders:'Supply Orders',hotels:'Hotels & Customers',settings:'Settings'};
+const TITLES={home:APP,products:'Stock & Items',orders:'Supply Orders',hotels:'Hotels & Customers',reports:'Reports',settings:'Settings'};
 let view='home';
 function go(v){
   view=v;
@@ -248,7 +263,7 @@ function go(v){
   $('#fab').classList.toggle('hidden', !['products','orders','hotels'].includes(v));
   $('#title').textContent=TITLES[v]; window.scrollTo(0,0); render();
 }
-function render(){ ({home:vHome,products:vProducts,orders:vOrders,hotels:vHotels,settings:vSettings})[view]($('#main')); }
+function render(){ ({home:vHome,products:vProducts,orders:vOrders,hotels:vHotels,reports:vReports,settings:vSettings})[view]($('#main')); }
 function fabAction(){ if(view==='products') productForm(); else if(view==='hotels') hotelForm(); else if(view==='orders') orderForm(); }
 
 /* ================= Modal ================= */
@@ -257,6 +272,7 @@ function openModal(title, html){
   const ov=document.createElement('div'); ov.className='ov'; ov.id='ov';
   ov.innerHTML=`<div class="sheet"><h3>${title}<button class="close" onclick="closeModal()">×</button></h3>${html}</div>`;
   ov.onclick=e=>{ if(e.target===ov) closeModal(); };
+  ov.querySelectorAll('input:not([type=number]):not([type=tel]),select').forEach(e=>{e.dir='auto';e.setAttribute('autocomplete','off');e.setAttribute('autocorrect','off');e.setAttribute('spellcheck','false');});
   document.body.appendChild(ov);
 }
 function closeModal(){ $('#ov')?.remove(); }
@@ -293,7 +309,7 @@ function productCard(p){
     <div class="end">${qtyFmt(p.qty)} ${esc(p.unit)}<br>${low?'<span class="tag low">Low</span>':'<span class="tag ok">In stock</span>'}</div></div>`;
 }
 function vProducts(m){
-  m.innerHTML=`<input class="search" placeholder="🔍 Search items..." value="${esc(pq)}" oninput="pq=this.value;listProducts()"><div id="list"></div>`;
+  m.innerHTML=`<input class="search" dir="auto" autocomplete="off" placeholder="🔍 Search items..." value="${esc(pq)}" oninput="pq=this.value;listProducts()"><div id="list"></div>`;
   listProducts();
 }
 function listProducts(){
@@ -315,12 +331,12 @@ function productForm(id){
     <div class="btns"><button class="btn p" onclick="saveProduct('${id||''}')">Save</button>${id?`<button class="btn d" onclick="delProduct('${id}')">Delete</button>`:''}</div>`);
 }
 function saveProduct(id){
-  const d={name:$('#pn').value.trim(),unit:$('#pu').value,qty:num($('#pqty').value),min:num($('#pm').value),cost:num($('#pc').value),price:num($('#pp').value),updated:now()};
+  const d={name:$('#pn').value.replace(/\s+/g,' ').trim(),unit:$('#pu').value,qty:num($('#pqty').value),min:num($('#pm').value),cost:num($('#pc').value),price:num($('#pp').value),updated:now()};
   if(!d.name) return toast('Enter the item name');
   if(!id && DB.products.some(x=>String(x.name).trim().toLowerCase()===d.name.toLowerCase())) return toast('This item already exists');
   commit([{action:id?'update':'add',sheet:'products',data:{id:id||uid(),...d}}], 'Item saved ✓');
 }
-function delProduct(id){ if(confirm('Delete this item permanently?')) commit([{action:'delete',sheet:'products',data:{id}}],'Deleted'); }
+function delProduct(id){ if(ask('Delete this item permanently?')) commit([{action:'delete',sheet:'products',data:{id}}],'Deleted'); }
 
 /* ================= Hotels ================= */
 function hotelCard(h){
@@ -368,7 +384,7 @@ function hotelStatement(id){
       ${rows.length?'':`<button class="btn d" onclick="delHotel('${id}')">Delete</button>`}
     </div>`);
 }
-function delHotel(id){ if(confirm('Delete this hotel?')) commit([{action:'delete',sheet:'hotels',data:{id}}],'Deleted'); }
+function delHotel(id){ if(ask('Delete this hotel?')) commit([{action:'delete',sheet:'hotels',data:{id}}],'Deleted'); }
 function paymentForm(hid){
   const h=DB.hotels.find(x=>String(x.id)===String(hid));
   openModal('Payment from '+esc(h.name),`
@@ -404,7 +420,7 @@ function vOrders(m){
     ${arr.length?arr.map(orderCard).join(''):'<div class="empty">No orders — tap + to create a supply order</div>'}`;
 }
 function lineHTML(){
-  const opts=DB.products.map(p=>`<option value="${p.id}">${esc(p.name)} (${qtyFmt(p.qty)} ${esc(p.unit)})</option>`).join('');
+  const opts=DB.products.map(p=>`<option value="${p.id}">\u2068${esc(p.name)}\u2069 (${qtyFmt(p.qty)} ${esc(p.unit)})</option>`).join('');
   return `<div class="line"><select class="lp" onchange="linePrice(this)"><option value="">Select item</option>${opts}</select>
     <input class="lq" type="number" step="any" inputmode="decimal" placeholder="Qty" oninput="calcTotal()">
     <input class="lr" type="number" step="any" inputmode="decimal" placeholder="Price" oninput="calcTotal()">
@@ -435,7 +451,7 @@ function saveOrder(){
   if(!lines.length) return toast('Add at least one item with a quantity');
   const need={}; lines.forEach(l=>need[l.id]=(need[l.id]||0)+l.qty);
   const short=Object.keys(need).map(id=>DB.products.find(p=>String(p.id)===id)).filter(p=>need[p.id]>num(p.qty));
-  if(short.length && !confirm('Not enough stock for:\n'+short.map(p=>`${p.name}: available ${qtyFmt(p.qty)}, required ${qtyFmt(need[p.id])}`).join('\n')+'\n\nContinue anyway (stock will go negative)?')) return;
+  if(short.length && !ask('Not enough stock for:\n'+short.map(p=>`${p.name}: available ${qtyFmt(p.qty)}, required ${qtyFmt(need[p.id])}`).join('\n')+'\n\nContinue anyway (stock will go negative)?')) return;
   const total=lines.reduce((s,l)=>s+l.qty*l.price,0);
   const h=DB.hotels.find(x=>String(x.id)===$('#oh').value);
   const no=DB.orders.reduce((mx,o)=>Math.max(mx,num(o.no)),1000)+1;
@@ -477,13 +493,90 @@ function printOrder(id){
   w.document.close(); setTimeout(()=>w.print(),400);
 }
 function delOrder(id){
-  if(!confirm('Delete this order? Quantities will be returned to stock and the amount removed from the hotel balance.')) return;
+  if(!ask('Delete this order? Quantities will be returned to stock and the amount removed from the hotel balance.')) return;
   const o=DB.orders.find(x=>String(x.id)===String(id)); const back={};
   items(o).forEach(l=>back[l.id]=(back[l.id]||0)+num(l.qty));
   const ops=[{action:'delete',sheet:'orders',data:{id}}];
   Object.keys(back).forEach(pid=>{ const p=DB.products.find(x=>String(x.id)===pid); if(p) ops.push({action:'update',sheet:'products',data:{id:pid,qty:num(p.qty)+back[pid],updated:now()}}); });
   const h=DB.hotels.find(x=>String(x.id)===String(o.hotelId)); if(h) ops.push({action:'update',sheet:'hotels',data:{id:h.id,balance:num(h.balance)-num(o.total),updated:now()}});
   commit(ops,'Order deleted');
+}
+
+/* ================= Reports ================= */
+const RP_TYPES={summary:'Summary',invoices:'Invoices',byhotel:'By hotel',byitem:'By item',stock:'Stock',recv:'Receivables',pays:'Payments'};
+let rp={type:'summary',from:'',to:''};
+function rpPreset(k){ const t=now().slice(0,10); if(k==='today'){rp.from=rp.to=t;} else if(k==='month'){rp.from=t.slice(0,8)+'01';rp.to=t;} else {rp.from=rp.to='';} render(); }
+function inRange(d){ const x=String(d).slice(0,10); return (!rp.from||x>=rp.from)&&(!rp.to||x<=rp.to); }
+function rpPeriod(){ return (rp.from||rp.to) ? `${rp.from||'start'} → ${rp.to||'today'}` : 'All dates'; }
+function rpData(){
+  const ords=DB.orders.filter(o=>inRange(o.date)), pays=DB.payments.filter(p=>inRange(p.date));
+  const sum=(a,f)=>a.reduce((s,x)=>s+num(f(x)),0);
+  const cogs=o=>items(o).reduce((s,l)=>s+num(l.qty)*num(l.cost),0);
+  const byDate=(a,b)=>String(a.date).localeCompare(String(b.date));
+  switch(rp.type){
+    case 'invoices': {
+      const rows=[...ords].sort(byDate).map(o=>[String(o.date).slice(0,10),'#'+o.no,o.hotelName,isDone(o)?DONE:WAIT,num(o.total)]);
+      return {dated:true,head:['Date','No.','Hotel','Status','Total'],rows,foot:['','','',rows.length+' invoice(s)',sum(ords,o=>o.total)]};
+    }
+    case 'byhotel': {
+      const rows=DB.hotels.map(h=>{ const os=ords.filter(o=>String(o.hotelId)===String(h.id)), ps=pays.filter(p=>String(p.hotelId)===String(h.id));
+        return [h.name,os.length,sum(os,o=>o.total),sum(ps,p=>p.amount),num(h.balance)]; }).filter(r=>r[1]||r[3]||r[4]).sort((a,b)=>b[2]-a[2]);
+      return {dated:true,head:['Hotel','Invoices','Sales','Collected','Balance now'],rows,foot:['Total',sum(rows,r=>r[1]),sum(rows,r=>r[2]),sum(rows,r=>r[3]),sum(rows,r=>r[4])]};
+    }
+    case 'byitem': {
+      const m={}; ords.forEach(o=>items(o).forEach(l=>{ const k=l.id||l.name; const r=m[k]||(m[k]=[l.name,l.unit||'',0,0,0,0]); r[2]+=num(l.qty); r[3]+=num(l.qty)*num(l.price); r[4]+=num(l.qty)*num(l.cost); r[5]=r[3]-r[4]; }));
+      const rows=Object.values(m).sort((a,b)=>b[3]-a[3]);
+      return {dated:true,head:['Item','Unit','Qty sold','Sales','Cost','Profit'],rows,foot:['Total','','',sum(rows,r=>r[3]),sum(rows,r=>r[4]),sum(rows,r=>r[5])]};
+    }
+    case 'stock': {
+      const rows=[...DB.products].sort((a,b)=>String(a.name).localeCompare(String(b.name))).map(p=>[p.name,p.unit,num(p.qty),num(p.cost),num(p.qty)*num(p.cost),num(p.qty)*num(p.price),num(p.qty)<=num(p.min)?'Low':'OK']);
+      return {dated:false,head:['Item','Unit','Qty','Cost','Value (cost)','Value (sale)','Status'],rows,foot:['Total','','','',sum(rows,r=>r[4]),sum(rows,r=>r[5]),'']};
+    }
+    case 'recv': {
+      const rows=DB.hotels.filter(h=>num(h.balance)!==0).sort((a,b)=>num(b.balance)-num(a.balance)).map(h=>[h.name,String(h.phone||''),num(h.balance)]);
+      return {dated:false,head:['Hotel','Phone','Balance due'],rows,foot:['Total','',sum(rows,r=>r[2])]};
+    }
+    case 'pays': {
+      const rows=[...pays].sort(byDate).map(p=>[String(p.date).slice(0,10),p.hotelName,String(p.note||''),num(p.amount)]);
+      return {dated:true,head:['Date','Hotel','Note','Amount'],rows,foot:['Total','','',sum(pays,p=>p.amount)]};
+    }
+    default: {
+      const sales=sum(ords,o=>o.total), cost=sum(ords,cogs), gp=sales-cost;
+      return {dated:true,head:['Description','Amount ('+CUR+')'],foot:null,rows:[
+        ['Number of invoices',ords.length],['Sales',sales],['Cost of goods sold',cost],['Gross profit',gp],
+        ['Gross margin',sales?(gp/sales*100).toFixed(1)+'%':'—'],['Collections received',sum(pays,p=>p.amount)],
+        ['Receivables (now)',sum(DB.hotels,h=>h.balance)],['Stock value at cost (now)',sum(DB.products,p=>num(p.qty)*num(p.cost))]]};
+    }
+  }
+}
+function rpTable(r){
+  const c=v=>typeof v==='number'?qtyFmt(v):esc(v);
+  const body=r.rows.length?r.rows.map(x=>`<tr>${x.map(v=>`<td>${c(v)}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${r.head.length}" style="text-align:center;color:#6b7a74;padding:20px">No data for this period</td></tr>`;
+  return `<table class="st"><thead><tr>${r.head.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${body}</tbody>${r.foot?`<tfoot><tr>${r.foot.map(v=>`<th>${c(v)}</th>`).join('')}</tr></tfoot>`:''}</table>`;
+}
+function vReports(m){
+  const r=rpData();
+  m.innerHTML=`
+  <div class="rdate"><div><label>From</label><input type="date" value="${rp.from}" onchange="rp.from=this.value;render()"></div><div><label>To</label><input type="date" value="${rp.to}" onchange="rp.to=this.value;render()"></div></div>
+  <div class="chips"><span class="chip" onclick="rpPreset('today')">Today</span><span class="chip" onclick="rpPreset('month')">This month</span><span class="chip" onclick="rpPreset('all')">All dates</span></div>
+  <div class="chips">${Object.keys(RP_TYPES).map(k=>`<span class="chip ${rp.type===k?'act':''}" onclick="rp.type='${k}';render()">${RP_TYPES[k]}</span>`).join('')}</div>
+  <div class="box"><div class="sec" style="margin:0 0 2px">${RP_TYPES[rp.type]} report</div>
+    <p style="margin-bottom:8px">${r.dated?rpPeriod():'Current position (not affected by dates)'}</p>
+    <div class="scroll">${rpTable(r)}</div>
+    <div class="btns"><button class="btn p" onclick="rpPrint()">🖨️ Print / PDF</button><button class="btn s" onclick="rpCSV()">⬇️ Excel (CSV)</button></div>
+  </div>`;
+}
+function rpPrint(){
+  const r=rpData(), w=window.open('','_blank');
+  w.document.write(`<html><head><meta charset="utf-8"><title>${APP} - ${RP_TYPES[rp.type]}</title><style>body{font-family:Poppins,Cairo,Arial;padding:24px}h2{margin:0 0 4px}table{width:100%;border-collapse:collapse;margin-top:14px}td,th{border:1px solid #ccc;padding:7px;text-align:left}td{unicode-bidi:plaintext}thead th{background:#0b3b2e;color:#fff}tfoot th{background:#eef3f1}</style></head><body>
+  <h2>${APP} — ${RP_TYPES[rp.type]} report</h2><div>${r.dated?'Period: '+rpPeriod():'Current position'} &nbsp;|&nbsp; Printed: ${now()}</div>${rpTable(r)}</body></html>`);
+  w.document.close(); setTimeout(()=>w.print(),400);
+}
+function rpCSV(){
+  const r=rpData(), q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const lines=[r.head,...r.rows,...(r.foot?[r.foot]:[])].map(x=>x.map(q).join(','));
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));
+  a.download=`el-sama-${rp.type}-${now().slice(0,10)}.csv`; a.click();
 }
 
 /* ================= Settings ================= */
@@ -505,26 +598,27 @@ function vSettings(m){
   <div class="box"><div class="btns" style="margin:0"><button class="btn d" onclick="logout()">Sign out</button></div></div>`;
 }
 async function saveConn(){
-  localStorage.setItem('gs_url',$('#su').value.trim()); localStorage.setItem('gs_token',$('#st').value.trim());
+  if(!API.url() && (DB.products.length||DB.hotels.length||DB.orders.length||DB.payments.length)) LS.setItem('gdb_local_backup', JSON.stringify(DB));
+  LS.setItem('gs_url',$('#su').value.trim()); LS.setItem('gs_token',$('#st').value.trim());
   if(!API.url()){ setDot(''); render(); return toast('Switched to local mode'); }
   await sync(true); render();
 }
 async function uploadLocal(){
-  let local; try{ local=JSON.parse(localStorage.getItem('gdb_local_backup')||'null'); }catch{}
+  let local; try{ local=JSON.parse(LS.getItem('gdb_local_backup')||'null'); }catch{}
   const src=local||DB;
-  if(!confirm('All data stored on this device will be added to Google Sheets. Continue?')) return;
+  if(!ask('All data stored on this device will be added to Google Sheets. Continue?')) return;
   const ops=[]; ['products','hotels','orders','payments'].forEach(s=>(src[s]||[]).forEach(r=>ops.push({action:'add',sheet:s,data:r})));
   if(!ops.length) return toast('No local data found');
   commit(ops,ops.length+' records uploaded ✓');
 }
 function backup(){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'})); a.download='el-sama-backup-'+now().slice(0,10)+'.json'; a.click(); }
-function clearLocal(){ if(!confirm('Delete all data from this device?')) return; localStorage.removeItem('gdb'); DB={products:[],hotels:[],orders:[],payments:[]}; render(); toast('Cleared'); }
+function clearLocal(){ if(!ask('Delete all data from this device?')) return; LS.removeItem('gdb'); DB={products:[],hotels:[],orders:[],payments:[]}; render(); toast('Cleared'); }
 
 /* ================= Start ================= */
 // Keep a copy of local data before the first connection so it can be uploaded later
-if(!localStorage.getItem('gs_url') && localStorage.getItem('gdb')) localStorage.setItem('gdb_local_backup', localStorage.getItem('gdb'));
-if(localStorage.getItem('auth')||sessionStorage.getItem('auth')) enterApp();
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+if(!LS.getItem('gs_url') && LS.getItem('gdb')) LS.setItem('gdb_local_backup', LS.getItem('gdb'));
+if(LS.getItem('auth')||SS.getItem('auth')) enterApp();
+try{ if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}
 </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-const CACHE = 'el-sama-v2';
+const CACHE = 'el-sama-v5';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', e => {
