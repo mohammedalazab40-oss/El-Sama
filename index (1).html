@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" translate="no" class="notranslate">
+<head>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b3b2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="El-Sama">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>El-Sama</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--g1:#0b3b2e;--g2:#14684f;--gold:#d4a24c;--bg:#f3f6f5;--txt:#1d2b26;--mut:#6b7a74}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Poppins','Cairo',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+button,input,select,textarea{font-family:inherit;font-size:15px}
+.hidden{display:none!important}
+
+/* ===== Login ===== */
+#login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(145deg,#06261d 0%,#0b3b2e 45%,#14684f 100%);overflow:hidden;z-index:100}
+.blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.5;animation:float 12s ease-in-out infinite}
+.b1{width:320px;height:320px;background:#d4a24c;top:-90px;left:-100px}
+.b2{width:280px;height:280px;background:#1fa37a;bottom:-90px;right:-80px;animation-delay:-4s}
+.b3{width:170px;height:170px;background:#f3d9a4;top:48%;right:62%;opacity:.22;animation-delay:-8s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,-30px) scale(1.1)}}
+.lcard{position:relative;width:100%;max-width:380px;padding:36px 26px 26px;border-radius:28px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 25px 60px rgba(0,0,0,.35);color:#fff;animation:rise .7s cubic-bezier(.2,.8,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(30px)}}
+.logo{width:86px;height:86px;margin:0 auto 14px;border-radius:26px;background:linear-gradient(145deg,#e7bd6a,#b8862f);display:grid;place-items:center;box-shadow:0 12px 30px rgba(212,162,76,.45)}
+.logo svg{width:48px;height:48px}
+.lcard h1{text-align:center;font-size:28px;font-weight:800;letter-spacing:.5px}
+.lcard h1 span{color:var(--gold)}
+.lcard .sub{text-align:center;font-size:13px;opacity:.75;margin:2px 0 26px}
+.field{position:relative;margin-bottom:14px}
+.field input{width:100%;padding:14px 46px;border-radius:14px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1);color:#fff;outline:none;transition:.2s}
+.field input::placeholder{color:rgba(255,255,255,.6)}
+.field input:focus{border-color:var(--gold);background:rgba(255,255,255,.16);box-shadow:0 0 0 4px rgba(212,162,76,.18)}
+.field .ic{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:20px;height:20px;opacity:.8}
+.field .eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:0;color:#fff;opacity:.75;cursor:pointer;padding:5px;display:grid}
+.lrow{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin:2px 2px 20px}
+.chk{display:flex;align-items:center;gap:7px;cursor:pointer}
+.chk input{accent-color:var(--gold);width:16px;height:16px}
+.btn-login{width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(135deg,#e7bd6a,#c4913a);color:#1b1205;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 10px 25px rgba(212,162,76,.4);transition:.15s;letter-spacing:.3px}
+.btn-login:active{transform:scale(.97)}
+.err{color:#ffb4ab;font-size:13px;text-align:center;min-height:20px;margin-top:12px}
+.shake{animation:shake .45s!important}
+@keyframes shake{20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
+.lfoot{text-align:center;font-size:11.5px;opacity:.55;margin-top:14px}
+
+/* ===== App ===== */
+header{position:sticky;top:0;z-index:20;background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;padding:calc(env(safe-area-inset-top) + 14px) 16px 16px;display:flex;align-items:center;gap:10px;border-radius:0 0 22px 22px;box-shadow:0 6px 20px rgba(11,59,46,.25)}
+header h2{font-size:18px;flex:1;font-weight:600}
+.dot{width:10px;height:10px;border-radius:50%;background:#a9b7b1}
+.dot.on{background:#3ee08f}.dot.busy{background:#f0b84a;animation:pulse 1s infinite}.dot.err{background:#ff6b6b}
+@keyframes pulse{50%{opacity:.3}}
+.hbtn{background:rgba(255,255,255,.14);border:0;color:#fff;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;cursor:pointer}
+.hbtn svg{width:20px;height:20px}
+main{padding:16px 14px 110px;max-width:760px;margin:0 auto}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:8px 6px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -4px 20px rgba(0,0,0,.08);z-index:20;border-radius:20px 20px 0 0}
+nav button{flex:1;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:var(--mut);padding:6px 0;cursor:pointer;font-weight:500}
+nav button svg{width:22px;height:22px}
+nav button.act{color:var(--g2);font-weight:600}
+.hello{margin:2px 4px 14px}.hello b{font-size:18px}.hello small{display:block;color:var(--mut);font-size:12.5px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.stat{background:#fff;border-radius:18px;padding:14px;box-shadow:0 4px 14px rgba(0,0,0,.05)}
+.stat small{color:var(--mut);font-size:12px}
+.stat b{display:block;font-size:18px;margin-top:4px}
+.stat.hl{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff}.stat.hl small{color:#cfe8dd}
+.sec{font-size:15px;font-weight:600;margin:8px 4px 10px}
+.card{background:#fff;border-radius:16px;padding:13px 14px;margin-bottom:10px;box-shadow:0 3px 12px rgba(0,0,0,.05);display:flex;align-items:center;gap:12px;cursor:pointer}
+.av{width:44px;height:44px;border-radius:13px;background:#e8f3ee;color:var(--g2);display:grid;place-items:center;font-weight:700;flex-shrink:0;font-size:13px}
+.info{flex:1;min-width:0}
+.info b{unicode-bidi:plaintext;text-align:left;display:block;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info small{color:var(--mut);font-size:12.5px}
+.end{text-align:right;font-weight:600;font-size:14px;white-space:nowrap}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.tag.ok{background:#e3f6ec;color:#1b7a4f}.tag.wait{background:#fff3dc;color:#a46a00}.tag.low{background:#fde8e7;color:#c0392b}
+.red{color:#c0392b}.grn{color:#1b7a4f}
+.search{width:100%;padding:12px 14px;border-radius:14px;border:1px solid #e1e7e4;background:#fff;margin-bottom:12px;outline:none}
+.chips{display:flex;gap:8px;margin-bottom:12px;overflow:auto}
+.chip{padding:7px 14px;border-radius:20px;background:#fff;border:1px solid #e1e7e4;font-size:13px;white-space:nowrap;cursor:pointer}
+.chip.act{background:var(--g2);color:#fff;border-color:var(--g2)}
+.fab{position:fixed;right:18px;bottom:calc(86px + env(safe-area-inset-bottom));width:56px;height:56px;border-radius:18px;border:0;background:linear-gradient(135deg,#e7bd6a,#c4913a);color:#1b1205;font-size:30px;box-shadow:0 10px 25px rgba(196,145,58,.45);cursor:pointer;z-index:19}
+.empty{text-align:center;color:var(--mut);padding:40px 10px;font-size:14px}
+.box{background:#fff;border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 3px 12px rgba(0,0,0,.05)}
+.box p{font-size:13px;color:var(--mut);line-height:1.8}
+
+/* ===== Sheet modal ===== */
+.ov{position:fixed;inset:0;background:rgba(5,20,15,.5);z-index:50;display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
+.sheet{background:#fff;width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));animation:up .25s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(100%)}} @keyframes fade{from{opacity:0}}
+.sheet h3{font-size:17px;font-weight:600;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.close{background:#eef3f1;border:0;width:32px;height:32px;border-radius:10px;cursor:pointer;font-size:18px}
+.f{margin-bottom:11px}.f label{display:block;font-size:12.5px;color:var(--mut);margin-bottom:4px;font-weight:500}
+.f input,.f select,.f textarea{width:100%;padding:11px 12px;border-radius:12px;border:1px solid #dfe6e2;background:#fafcfb;outline:none}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--g2)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{padding:12px 14px;border-radius:12px;border:0;font-weight:600;cursor:pointer}
+.btn:disabled{opacity:.6}
+.btn.p{background:var(--g2);color:#fff}.btn.s{background:#eef3f1;color:var(--txt)}.btn.d{background:#fde8e7;color:#c0392b}.btn.gl{background:var(--gold);color:#1b1205}.btn.wa{background:#25d366;color:#fff}
+.btns{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.btns .btn{flex:1}
+.line{display:grid;grid-template-columns:1fr 64px 78px 36px;gap:6px;margin-bottom:8px;align-items:center}
+.line select,.line input{padding:9px 7px;border-radius:10px;border:1px solid #dfe6e2;width:100%;font-size:14px;background:#fafcfb}
+.x{background:#fde8e7;color:#c0392b;border:0;border-radius:10px;height:38px;cursor:pointer}
+.lhead{display:grid;grid-template-columns:1fr 64px 78px 36px;gap:6px;font-size:11.5px;color:var(--mut);margin-bottom:4px}
+.total{background:#f0f7f4;border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;font-weight:700;margin-top:8px}
+table.st{width:100%;border-collapse:collapse;font-size:13px}
+table.st th,table.st td{padding:8px 5px;border-bottom:1px solid #eef2f0;text-align:left}
+table.st th{color:var(--mut);font-weight:500}
+table.st td{unicode-bidi:plaintext}
+table.st tfoot th{color:var(--txt);font-weight:700;border-top:2px solid #dfe6e2}
+.scroll{overflow-x:auto}
+.rdate{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.rdate input{width:100%;padding:10px;border-radius:12px;border:1px solid #e1e7e4;background:#fff}
+.rdate label{font-size:12px;color:var(--mut)}
+.toast{position:fixed;top:calc(env(safe-area-inset-top) + 16px);left:50%;transform:translateX(-50%);background:#1d2b26;color:#fff;padding:10px 18px;border-radius:12px;z-index:200;font-size:14px;animation:fade .2s;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+
+<!-- ============ Login ============ -->
+<section id="login">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <form class="lcard" id="lform" autocomplete="on">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1b1205" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18l-1.6 9.2A2 2 0 0 1 17.4 20H6.6a2 2 0 0 1-2-1.8L3 9z"/><path d="M8 9l3-5M16 9l-3-5"/><path d="M9 13v4M12 13v4M15 13v4"/></svg>
+    </div>
+    <h1>El-<span>Sama</span></h1>
+    <p class="sub">Grocery Supply &amp; Hotel Distribution</p>
+    <div class="field">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+      <input id="u" placeholder="Username" autocomplete="username" autocapitalize="off" required>
+    </div>
+    <div class="field">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      <input id="p" type="password" placeholder="Password" autocomplete="current-password" required>
+      <button type="button" class="eye" id="eye" aria-label="Show password"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="lrow"><label class="chk"><input type="checkbox" id="rem" checked> Remember me</label><span style="opacity:.6">v1.0</span></div>
+    <button class="btn-login" type="submit">Sign In</button>
+    <div class="err" id="lerr"></div>
+    <div class="lfoot">© El-Sama — All rights reserved</div>
+  </form>
+</section>
+
+<!-- ============ App ============ -->
+<section id="app" class="hidden">
+  <header>
+    <span class="dot" id="dot" title="Connection status"></span>
+    <h2 id="title">Home</h2>
+    <button class="hbtn" onclick="sync(true)" title="Sync"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></svg></button>
+    <button class="hbtn" onclick="logout()" title="Sign out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4M14 17l5-5-5-5M19 12H8"/></svg></button>
+  </header>
+  <main id="main"></main>
+  <button class="fab hidden" id="fab" onclick="fabAction()">+</button>
+  <nav>
+    <button data-v="home" class="act" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</button>
+    <button data-v="products" onclick="go('products')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/></svg>Stock</button>
+    <button data-v="orders" onclick="go('orders')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>Orders</button>
+    <button data-v="hotels" onclick="go('hotels')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 9h4a1 1 0 0 1 1 1v11M2 21h20M8 8h3M8 12h3M8 16h3"/></svg>Hotels</button>
+    <button data-v="reports" onclick="go('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3M20 16V6"/></svg>Reports</button>
+    <button data-v="settings" onclick="go('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-2.7-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg>Settings</button>
+  </nav>
+</section>
+
+<script>
+/* ================= Login settings ================= */
+const USER = 'admin', PASS = '123';
+const APP = 'El-Sama';
+const CUR = 'EGP';
+const UNITS = ['kg','carton','can','liter','piece','sack','box','pack','dozen'];
+const DONE = 'Delivered', WAIT = 'Pending';
+
+/* ================= Helpers ================= */
+const $ = s => document.querySelector(s);
+const num = v => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+const money = n => num(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2}) + ' ' + CUR;
+const qtyFmt = n => num(n).toLocaleString('en-US',{maximumFractionDigits:3});
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const now = () => { const d=new Date(), p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
+const items = o => { try { return typeof o.items==='string' ? JSON.parse(o.items||'[]') : (o.items||[]); } catch { return []; } };
+const isDone = o => o.status===DONE || o.status==='مسلّم';
+function toast(m){ const t=document.createElement('div'); t.className='toast'; t.textContent=m; document.body.appendChild(t); setTimeout(()=>t.remove(),2400); }
+function setDot(s){ $('#dot').className='dot '+(s||''); }
+
+/* ================= Data ================= */
+let DB = {products:[],hotels:[],orders:[],payments:[]};
+function loadCache(){ try{ const d=JSON.parse(localStorage.getItem('gdb')||'null'); if(d) DB=Object.assign({products:[],hotels:[],orders:[],payments:[]},d); }catch{} }
+function saveCache(){ localStorage.setItem('gdb', JSON.stringify(DB)); }
+function setData(d){ DB = Object.assign({products:[],hotels:[],orders:[],payments:[]}, d||{}); saveCache(); }
+
+const API = {
+  url: () => (localStorage.getItem('gs_url')||'').trim(),
+  token: () => (localStorage.getItem('gs_token')||'').trim(),
+  async call(body){
+    const r = await fetch(API.url(), {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({...body, token:API.token()})});
+    const j = await r.json();
+    if(!j.ok) throw new Error(j.error||'Unknown error');
+    return j.data;
+  }
+};
+
+async function sync(manual){
+  if(!API.url()){ setDot(''); if(manual) toast('Local mode — add your Google Sheet link in Settings'); return; }
+  setDot('busy');
+  try{ setData(await API.call({action:'all'})); setDot('on'); render(); if(manual) toast('Synced ✓'); }
+  catch(e){ setDot('err'); if(manual) toast('Connection failed: '+e.message); }
+}
+
+function applyLocal(op){
+  const arr = DB[op.sheet];
+  if(op.action==='add') arr.push({...op.data});
+  else if(op.action==='update'){ const o=arr.find(x=>String(x.id)===String(op.data.id)); if(o) Object.assign(o,op.data); }
+  else if(op.action==='delete'){ const i=arr.findIndex(x=>String(x.id)===String(op.data.id)); if(i>-1) arr.splice(i,1); }
+}
+
+let busy=false;
+async function commit(ops, msg){
+  if(busy) return false; busy=true;
+  try{
+    if(API.url()){
+      setDot('busy');
+      const send = ops.map(o => (o.data && o.data.phone) ? {...o, data:{...o.data, phone:"'"+o.data.phone}} : o);
+      try{ setData(await API.call({action:'batch', ops:send})); setDot('on'); }
+      catch(e){ setDot('err'); toast('Save failed: '+e.message); return false; }
+    } else { ops.forEach(applyLocal); saveCache(); }
+    closeModal(); render(); if(msg) toast(msg); return true;
+  } finally { busy=false; }
+}
+
+/* ================= Login ================= */
+$('#eye').onclick = () => { const p=$('#p'); p.type = p.type==='password' ? 'text' : 'password'; };
+$('#lform').onsubmit = e => {
+  e.preventDefault();
+  if($('#u').value.trim().toLowerCase()===USER && $('#p').value===PASS){
+    (($('#rem').checked) ? localStorage : sessionStorage).setItem('auth','1');
+    enterApp();
+  } else {
+    const c=$('#lform'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake');
+    $('#lerr').textContent='Incorrect username or password';
+  }
+};
+function enterApp(){ $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); loadCache(); go('home'); sync(); }
+function logout(){ if(!confirm('Sign out?')) return; localStorage.removeItem('auth'); sessionStorage.removeItem('auth'); location.reload(); }
+
+/* ================= Navigation ================= */
+const TITLES={home:APP,products:'Stock & Items',orders:'Supply Orders',hotels:'Hotels & Customers',reports:'Reports',settings:'Settings'};
+let view='home';
+function go(v){
+  view=v;
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('act', b.dataset.v===v));
+  $('#fab').classList.toggle('hidden', !['products','orders','hotels'].includes(v));
+  $('#title').textContent=TITLES[v]; window.scrollTo(0,0); render();
+}
+function render(){ ({home:vHome,products:vProducts,orders:vOrders,hotels:vHotels,reports:vReports,settings:vSettings})[view]($('#main')); }
+function fabAction(){ if(view==='products') productForm(); else if(view==='hotels') hotelForm(); else if(view==='orders') orderForm(); }
+
+/* ================= Modal ================= */
+function openModal(title, html){
+  closeModal();
+  const ov=document.createElement('div'); ov.className='ov'; ov.id='ov';
+  ov.innerHTML=`<div class="sheet"><h3>${title}<button class="close" onclick="closeModal()">×</button></h3>${html}</div>`;
+  ov.onclick=e=>{ if(e.target===ov) closeModal(); };
+  ov.querySelectorAll('input:not([type=number]):not([type=tel]),select').forEach(e=>{e.dir='auto';e.setAttribute('autocomplete','off');e.setAttribute('autocorrect','off');e.setAttribute('spellcheck','false');});
+  document.body.appendChild(ov);
+}
+function closeModal(){ $('#ov')?.remove(); }
+
+/* ================= Home ================= */
+function vHome(m){
+  const today=now().slice(0,10);
+  const sales=DB.orders.filter(o=>String(o.date).startsWith(today)).reduce((s,o)=>s+num(o.total),0);
+  const stock=DB.products.reduce((s,p)=>s+num(p.qty)*num(p.cost),0);
+  const due=DB.hotels.reduce((s,h)=>s+num(h.balance),0);
+  const low=DB.products.filter(p=>num(p.qty)<=num(p.min));
+  const pending=DB.orders.filter(o=>!isDone(o)).length;
+  const recent=[...DB.orders].sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,5);
+  m.innerHTML=`
+  <div class="hello"><b>Welcome, admin 👋</b><small>${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</small></div>
+  <div class="stats">
+    <div class="stat hl"><small>Today's sales</small><b>${money(sales)}</b></div>
+    <div class="stat"><small>Stock value (at cost)</small><b>${money(stock)}</b></div>
+    <div class="stat"><small>Due from hotels</small><b class="${due>0?'red':''}">${money(due)}</b></div>
+    <div class="stat"><small>Pending deliveries</small><b>${pending}</b></div>
+  </div>
+  ${low.length?`<div class="sec">⚠️ Below reorder level (${low.length})</div>${low.map(productCard).join('')}`:''}
+  <div class="sec">Recent orders</div>
+  ${recent.length?recent.map(orderCard).join(''):'<div class="empty">No orders yet — go to "Orders" to create your first one</div>'}`;
+}
+
+/* ================= Items ================= */
+let pq='';
+function productCard(p){
+  const low=num(p.qty)<=num(p.min);
+  return `<div class="card" onclick="productForm('${p.id}')">
+    <div class="av">${esc(String(p.name).trim().charAt(0).toUpperCase())}</div>
+    <div class="info"><b>${esc(p.name)}</b><small>Sell ${money(p.price)} · Cost ${money(p.cost)}</small></div>
+    <div class="end">${qtyFmt(p.qty)} ${esc(p.unit)}<br>${low?'<span class="tag low">Low</span>':'<span class="tag ok">In stock</span>'}</div></div>`;
+}
+function vProducts(m){
+  m.innerHTML=`<input class="search" dir="auto" autocomplete="off" placeholder="🔍 Search items..." value="${esc(pq)}" oninput="pq=this.value;listProducts()"><div id="list"></div>`;
+  listProducts();
+}
+function listProducts(){
+  const q=pq.trim().toLowerCase(); const arr=DB.products.filter(p=>!q||String(p.name).toLowerCase().includes(q)).sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+  $('#list').innerHTML = arr.length ? arr.map(productCard).join('') : '<div class="empty">No items yet — tap + to add one</div>';
+}
+function productForm(id){
+  const p=DB.products.find(x=>String(x.id)===String(id)) || {name:'',unit:'kg',qty:0,min:0,cost:0,price:0};
+  const units = UNITS.includes(p.unit) ? UNITS : [p.unit, ...UNITS];
+  openModal(id?'Edit item':'New item',`
+    <div class="f"><label>Item name</label><input id="pn" value="${esc(p.name)}"></div>
+    <div class="g2">
+      <div class="f"><label>Unit</label><select id="pu">${units.map(u=>`<option ${u===p.unit?'selected':''}>${esc(u)}</option>`).join('')}</select></div>
+      <div class="f"><label>Quantity on hand</label><input id="pqty" type="number" step="any" inputmode="decimal" value="${num(p.qty)}"></div>
+      <div class="f"><label>Cost price</label><input id="pc" type="number" step="any" inputmode="decimal" value="${num(p.cost)}"></div>
+      <div class="f"><label>Selling price</label><input id="pp" type="number" step="any" inputmode="decimal" value="${num(p.price)}"></div>
+    </div>
+    <div class="f"><label>Reorder level</label><input id="pm" type="number" step="any" inputmode="decimal" value="${num(p.min)}"></div>
+    <div class="btns"><button class="btn p" onclick="saveProduct('${id||''}')">Save</button>${id?`<button class="btn d" onclick="delProduct('${id}')">Delete</button>`:''}</div>`);
+}
+function saveProduct(id){
+  const d={name:$('#pn').value.replace(/\s+/g,' ').trim(),unit:$('#pu').value,qty:num($('#pqty').value),min:num($('#pm').value),cost:num($('#pc').value),price:num($('#pp').value),updated:now()};
+  if(!d.name) return toast('Enter the item name');
+  if(!id && DB.products.some(x=>String(x.name).trim().toLowerCase()===d.name.toLowerCase())) return toast('This item already exists');
+  commit([{action:id?'update':'add',sheet:'products',data:{id:id||uid(),...d}}], 'Item saved ✓');
+}
+function delProduct(id){ if(confirm('Delete this item permanently?')) commit([{action:'delete',sheet:'products',data:{id}}],'Deleted'); }
+
+/* ================= Hotels ================= */
+function hotelCard(h){
+  const b=num(h.balance);
+  return `<div class="card" onclick="hotelStatement('${h.id}')">
+    <div class="av">🏨</div>
+    <div class="info"><b>${esc(h.name)}</b><small>${esc(h.phone||'—')} ${h.address?'· '+esc(h.address):''}</small></div>
+    <div class="end ${b>0?'red':'grn'}">${money(b)}<br><small style="color:var(--mut);font-weight:500">Balance</small></div></div>`;
+}
+function vHotels(m){
+  const arr=[...DB.hotels].sort((a,b)=>num(b.balance)-num(a.balance));
+  m.innerHTML = arr.length ? arr.map(hotelCard).join('') : '<div class="empty">No hotels yet — tap + to add one</div>';
+}
+function hotelForm(id){
+  const h=DB.hotels.find(x=>String(x.id)===String(id)) || {name:'',phone:'',address:'',balance:0};
+  openModal(id?'Edit hotel':'New hotel',`
+    <div class="f"><label>Hotel name</label><input id="hn" value="${esc(h.name)}"></div>
+    <div class="f"><label>Phone</label><input id="hp" type="tel" inputmode="tel" value="${esc(h.phone)}"></div>
+    <div class="f"><label>Address</label><input id="ha" value="${esc(h.address)}"></div>
+    ${id?'':`<div class="f"><label>Opening balance (previous debt)</label><input id="hb" type="number" step="any" inputmode="decimal" value="0"></div>`}
+    <div class="btns"><button class="btn p" onclick="saveHotel('${id||''}')">Save</button></div>`);
+}
+function saveHotel(id){
+  const d={name:$('#hn').value.trim(),phone:$('#hp').value.trim(),address:$('#ha').value.trim(),updated:now()};
+  if(!d.name) return toast('Enter the hotel name');
+  if(!id) d.balance=num($('#hb').value);
+  commit([{action:id?'update':'add',sheet:'hotels',data:{id:id||uid(),...d}}],'Saved ✓');
+}
+function hotelStatement(id){
+  const h=DB.hotels.find(x=>String(x.id)===String(id)); if(!h) return;
+  const ords=DB.orders.filter(o=>String(o.hotelId)===String(id)).map(o=>({date:o.date,desc:'Invoice #'+o.no,dr:num(o.total),cr:0}));
+  const pays=DB.payments.filter(p=>String(p.hotelId)===String(id)).map(p=>({date:p.date,desc:'Payment'+(p.note?' - '+p.note:''),dr:0,cr:num(p.amount)}));
+  const rows=[...ords,...pays].sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  const opening=num(h.balance)-rows.reduce((s,r)=>s+r.dr-r.cr,0);
+  let run=opening;
+  const tr=rows.map(r=>{run+=r.dr-r.cr; return `<tr><td>${esc(String(r.date).slice(0,10))}</td><td>${esc(r.desc)}</td><td>${r.dr?qtyFmt(r.dr):''}</td><td>${r.cr?qtyFmt(r.cr):''}</td><td><b>${qtyFmt(run)}</b></td></tr>`;}).join('');
+  openModal('Statement: '+esc(h.name),`
+    <table class="st"><thead><tr><th>Date</th><th>Details</th><th>Debit</th><th>Credit</th><th>Balance</th></tr></thead>
+    <tbody><tr><td>—</td><td>Opening balance</td><td></td><td></td><td><b>${qtyFmt(opening)}</b></td></tr>${tr}</tbody></table>
+    <div class="total"><span>Balance due</span><span class="${num(h.balance)>0?'red':'grn'}">${money(h.balance)}</span></div>
+    <div class="btns">
+      <button class="btn gl" onclick="paymentForm('${id}')">💰 Receive payment</button>
+      ${h.phone?`<a class="btn s" style="text-align:center;text-decoration:none" href="tel:${esc(h.phone)}">📞 Call</a>`:''}
+      <button class="btn s" onclick="hotelForm('${id}')">✏️ Edit</button>
+      ${rows.length?'':`<button class="btn d" onclick="delHotel('${id}')">Delete</button>`}
+    </div>`);
+}
+function delHotel(id){ if(confirm('Delete this hotel?')) commit([{action:'delete',sheet:'hotels',data:{id}}],'Deleted'); }
+function paymentForm(hid){
+  const h=DB.hotels.find(x=>String(x.id)===String(hid));
+  openModal('Payment from '+esc(h.name),`
+    <div class="f"><label>Amount received</label><input id="pa" type="number" step="any" inputmode="decimal" value="${Math.max(num(h.balance),0)}"></div>
+    <div class="f"><label>Note (cash / cheque / transfer)</label><input id="pnote"></div>
+    <div class="btns"><button class="btn p" onclick="savePayment('${hid}')">Record payment</button></div>`);
+}
+function savePayment(hid){
+  const h=DB.hotels.find(x=>String(x.id)===String(hid)); const a=num($('#pa').value);
+  if(a<=0) return toast('Enter a valid amount');
+  commit([
+    {action:'add',sheet:'payments',data:{id:uid(),date:now(),hotelId:hid,hotelName:h.name,amount:a,note:$('#pnote').value.trim()}},
+    {action:'update',sheet:'hotels',data:{id:hid,balance:num(h.balance)-a,updated:now()}}
+  ],'Payment recorded ✓');
+}
+
+/* ================= Orders ================= */
+let of='all';
+function orderCard(o){
+  const ok=isDone(o);
+  return `<div class="card" onclick="orderView('${o.id}')">
+    <div class="av">#${esc(o.no)}</div>
+    <div class="info"><b>${esc(o.hotelName)}</b><small>${esc(o.date)} · ${items(o).length} item(s)</small></div>
+    <div class="end">${money(o.total)}<br><span class="tag ${ok?'ok':'wait'}">${ok?DONE:WAIT}</span></div></div>`;
+}
+function vOrders(m){
+  let arr=[...DB.orders].sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  if(of==='wait') arr=arr.filter(o=>!isDone(o)); if(of==='done') arr=arr.filter(isDone);
+  m.innerHTML=`<div class="chips">
+    <span class="chip ${of==='all'?'act':''}" onclick="of='all';render()">All</span>
+    <span class="chip ${of==='wait'?'act':''}" onclick="of='wait';render()">Pending</span>
+    <span class="chip ${of==='done'?'act':''}" onclick="of='done';render()">Delivered</span></div>
+    ${arr.length?arr.map(orderCard).join(''):'<div class="empty">No orders — tap + to create a supply order</div>'}`;
+}
+function lineHTML(){
+  const opts=DB.products.map(p=>`<option value="${p.id}">\u2068${esc(p.name)}\u2069 (${qtyFmt(p.qty)} ${esc(p.unit)})</option>`).join('');
+  return `<div class="line"><select class="lp" onchange="linePrice(this)"><option value="">Select item</option>${opts}</select>
+    <input class="lq" type="number" step="any" inputmode="decimal" placeholder="Qty" oninput="calcTotal()">
+    <input class="lr" type="number" step="any" inputmode="decimal" placeholder="Price" oninput="calcTotal()">
+    <button class="x" onclick="this.parentElement.remove();calcTotal()">×</button></div>`;
+}
+function linePrice(sel){ const p=DB.products.find(x=>String(x.id)===sel.value); const r=sel.parentElement.querySelector('.lr'); if(p) r.value=num(p.price); calcTotal(); }
+function calcTotal(){ let t=0; document.querySelectorAll('.line').forEach(l=>t+=num(l.querySelector('.lq').value)*num(l.querySelector('.lr').value)); $('#otot').textContent=money(t); return t; }
+function orderForm(){
+  if(!DB.hotels.length) return toast('Add a hotel first from the Hotels screen');
+  if(!DB.products.length) return toast('Add items first from the Stock screen');
+  openModal('New supply order',`
+    <div class="f"><label>Hotel</label><select id="oh">${DB.hotels.map(h=>`<option value="${h.id}">${esc(h.name)}</option>`).join('')}</select></div>
+    <div class="lhead"><span>Item</span><span>Qty</span><span>Price</span><span></span></div>
+    <div id="lines">${lineHTML()}</div>
+    <button class="btn s" style="width:100%" onclick="$('#lines').insertAdjacentHTML('beforeend',lineHTML())">+ Add item</button>
+    <div class="total"><span>Total</span><span id="otot">0 ${CUR}</span></div>
+    <div class="g2" style="margin-top:10px">
+      <div class="f"><label>Status</label><select id="os"><option>${WAIT}</option><option>${DONE}</option></select></div>
+      <div class="f"><label>Notes</label><input id="on"></div>
+    </div>
+    <div class="btns"><button class="btn p" onclick="saveOrder()">Save order</button></div>`);
+}
+function saveOrder(){
+  const lines=[...document.querySelectorAll('.line')].map(l=>{
+    const p=DB.products.find(x=>String(x.id)===l.querySelector('.lp').value);
+    return p?{id:p.id,name:p.name,unit:p.unit,qty:num(l.querySelector('.lq').value),price:num(l.querySelector('.lr').value),cost:num(p.cost)}:null;
+  }).filter(l=>l&&l.qty>0);
+  if(!lines.length) return toast('Add at least one item with a quantity');
+  const need={}; lines.forEach(l=>need[l.id]=(need[l.id]||0)+l.qty);
+  const short=Object.keys(need).map(id=>DB.products.find(p=>String(p.id)===id)).filter(p=>need[p.id]>num(p.qty));
+  if(short.length && !confirm('Not enough stock for:\n'+short.map(p=>`${p.name}: available ${qtyFmt(p.qty)}, required ${qtyFmt(need[p.id])}`).join('\n')+'\n\nContinue anyway (stock will go negative)?')) return;
+  const total=lines.reduce((s,l)=>s+l.qty*l.price,0);
+  const h=DB.hotels.find(x=>String(x.id)===$('#oh').value);
+  const no=DB.orders.reduce((mx,o)=>Math.max(mx,num(o.no)),1000)+1;
+  const ops=[{action:'add',sheet:'orders',data:{id:uid(),no,date:now(),hotelId:h.id,hotelName:h.name,items:JSON.stringify(lines),total,status:$('#os').value,note:$('#on').value.trim()}}];
+  Object.keys(need).forEach(id=>{ const p=DB.products.find(x=>String(x.id)===id); ops.push({action:'update',sheet:'products',data:{id,qty:num(p.qty)-need[id],updated:now()}}); });
+  ops.push({action:'update',sheet:'hotels',data:{id:h.id,balance:num(h.balance)+total,updated:now()}});
+  commit(ops,'Order #'+no+' saved ✓');
+}
+function orderView(id){
+  const o=DB.orders.find(x=>String(x.id)===String(id)); if(!o) return;
+  const its=items(o), ok=isDone(o);
+  openModal('Invoice #'+esc(o.no),`
+    <div style="font-size:13.5px;color:var(--mut);margin-bottom:10px">Hotel: <b style="color:var(--txt)">${esc(o.hotelName)}</b><br>Date: ${esc(o.date)} ${o.note?'<br>Notes: '+esc(o.note):''}</div>
+    <table class="st"><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Amount</th></tr></thead>
+    <tbody>${its.map(l=>`<tr><td>${esc(l.name)}</td><td>${qtyFmt(l.qty)} ${esc(l.unit||'')}</td><td>${qtyFmt(l.price)}</td><td>${qtyFmt(l.qty*l.price)}</td></tr>`).join('')}</tbody></table>
+    <div class="total"><span>Total</span><span>${money(o.total)}</span></div>
+    <div class="btns">
+      <button class="btn ${ok?'s':'p'}" onclick="commit([{action:'update',sheet:'orders',data:{id:'${o.id}',status:'${ok?WAIT:DONE}'}}],'Status updated')">${ok?'↩︎ Mark pending':'✓ Mark delivered'}</button>
+      <button class="btn wa" onclick="shareWA('${o.id}')">WhatsApp</button>
+      <button class="btn s" onclick="printOrder('${o.id}')">🖨️ Print</button>
+      <button class="btn d" onclick="delOrder('${o.id}')">Delete</button>
+    </div>`);
+}
+function shareWA(id){
+  const o=DB.orders.find(x=>String(x.id)===String(id)); const h=DB.hotels.find(x=>String(x.id)===String(o.hotelId));
+  let t=`*${APP} — Supply Invoice #${o.no}*\nHotel: ${o.hotelName}\nDate: ${o.date}\n----------------\n`;
+  items(o).forEach(l=>t+=`${l.name}: ${qtyFmt(l.qty)} ${l.unit||''} × ${qtyFmt(l.price)} = ${qtyFmt(l.qty*l.price)}\n`);
+  t+=`----------------\n*Total: ${money(o.total)}*`;
+  let ph=String(h?.phone||'').replace(/\D/g,''); if(ph.startsWith('0')) ph='2'+ph;
+  window.open(`https://wa.me/${ph}?text=${encodeURIComponent(t)}`,'_blank');
+}
+function printOrder(id){
+  const o=DB.orders.find(x=>String(x.id)===String(id));
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><meta charset="utf-8"><title>Invoice ${o.no}</title><style>body{font-family:Poppins,Arial;padding:24px}h2{margin:0 0 6px}table{width:100%;border-collapse:collapse;margin-top:14px}td,th{border:1px solid #ccc;padding:8px;text-align:left}th{background:#0b3b2e;color:#fff}.t{margin-top:12px;font-size:18px;font-weight:bold}</style></head><body>
+  <h2>${APP} — Invoice #${esc(o.no)}</h2><div>Hotel: <b>${esc(o.hotelName)}</b> &nbsp; | &nbsp; Date: ${esc(o.date)}</div>
+  <table><tr><th>#</th><th>Item</th><th>Qty</th><th>Price</th><th>Amount</th></tr>${items(o).map((l,i)=>`<tr><td>${i+1}</td><td>${esc(l.name)}</td><td>${qtyFmt(l.qty)} ${esc(l.unit||'')}</td><td>${qtyFmt(l.price)}</td><td>${qtyFmt(l.qty*l.price)}</td></tr>`).join('')}</table>
+  <div class="t">Total: ${money(o.total)}</div><br><br><div>Received by (signature): ____________________</div></body></html>`);
+  w.document.close(); setTimeout(()=>w.print(),400);
+}
+function delOrder(id){
+  if(!confirm('Delete this order? Quantities will be returned to stock and the amount removed from the hotel balance.')) return;
+  const o=DB.orders.find(x=>String(x.id)===String(id)); const back={};
+  items(o).forEach(l=>back[l.id]=(back[l.id]||0)+num(l.qty));
+  const ops=[{action:'delete',sheet:'orders',data:{id}}];
+  Object.keys(back).forEach(pid=>{ const p=DB.products.find(x=>String(x.id)===pid); if(p) ops.push({action:'update',sheet:'products',data:{id:pid,qty:num(p.qty)+back[pid],updated:now()}}); });
+  const h=DB.hotels.find(x=>String(x.id)===String(o.hotelId)); if(h) ops.push({action:'update',sheet:'hotels',data:{id:h.id,balance:num(h.balance)-num(o.total),updated:now()}});
+  commit(ops,'Order deleted');
+}
+
+/* ================= Reports ================= */
+const RP_TYPES={summary:'Summary',invoices:'Invoices',byhotel:'By hotel',byitem:'By item',stock:'Stock',recv:'Receivables',pays:'Payments'};
+let rp={type:'summary',from:'',to:''};
+function rpPreset(k){ const t=now().slice(0,10); if(k==='today'){rp.from=rp.to=t;} else if(k==='month'){rp.from=t.slice(0,8)+'01';rp.to=t;} else {rp.from=rp.to='';} render(); }
+function inRange(d){ const x=String(d).slice(0,10); return (!rp.from||x>=rp.from)&&(!rp.to||x<=rp.to); }
+function rpPeriod(){ return (rp.from||rp.to) ? `${rp.from||'start'} → ${rp.to||'today'}` : 'All dates'; }
+function rpData(){
+  const ords=DB.orders.filter(o=>inRange(o.date)), pays=DB.payments.filter(p=>inRange(p.date));
+  const sum=(a,f)=>a.reduce((s,x)=>s+num(f(x)),0);
+  const cogs=o=>items(o).reduce((s,l)=>s+num(l.qty)*num(l.cost),0);
+  const byDate=(a,b)=>String(a.date).localeCompare(String(b.date));
+  switch(rp.type){
+    case 'invoices': {
+      const rows=[...ords].sort(byDate).map(o=>[String(o.date).slice(0,10),'#'+o.no,o.hotelName,isDone(o)?DONE:WAIT,num(o.total)]);
+      return {dated:true,head:['Date','No.','Hotel','Status','Total'],rows,foot:['','','',rows.length+' invoice(s)',sum(ords,o=>o.total)]};
+    }
+    case 'byhotel': {
+      const rows=DB.hotels.map(h=>{ const os=ords.filter(o=>String(o.hotelId)===String(h.id)), ps=pays.filter(p=>String(p.hotelId)===String(h.id));
+        return [h.name,os.length,sum(os,o=>o.total),sum(ps,p=>p.amount),num(h.balance)]; }).filter(r=>r[1]||r[3]||r[4]).sort((a,b)=>b[2]-a[2]);
+      return {dated:true,head:['Hotel','Invoices','Sales','Collected','Balance now'],rows,foot:['Total',sum(rows,r=>r[1]),sum(rows,r=>r[2]),sum(rows,r=>r[3]),sum(rows,r=>r[4])]};
+    }
+    case 'byitem': {
+      const m={}; ords.forEach(o=>items(o).forEach(l=>{ const k=l.id||l.name; const r=m[k]||(m[k]=[l.name,l.unit||'',0,0,0,0]); r[2]+=num(l.qty); r[3]+=num(l.qty)*num(l.price); r[4]+=num(l.qty)*num(l.cost); r[5]=r[3]-r[4]; }));
+      const rows=Object.values(m).sort((a,b)=>b[3]-a[3]);
+      return {dated:true,head:['Item','Unit','Qty sold','Sales','Cost','Profit'],rows,foot:['Total','','',sum(rows,r=>r[3]),sum(rows,r=>r[4]),sum(rows,r=>r[5])]};
+    }
+    case 'stock': {
+      const rows=[...DB.products].sort((a,b)=>String(a.name).localeCompare(String(b.name))).map(p=>[p.name,p.unit,num(p.qty),num(p.cost),num(p.qty)*num(p.cost),num(p.qty)*num(p.price),num(p.qty)<=num(p.min)?'Low':'OK']);
+      return {dated:false,head:['Item','Unit','Qty','Cost','Value (cost)','Value (sale)','Status'],rows,foot:['Total','','','',sum(rows,r=>r[4]),sum(rows,r=>r[5]),'']};
+    }
+    case 'recv': {
+      const rows=DB.hotels.filter(h=>num(h.balance)!==0).sort((a,b)=>num(b.balance)-num(a.balance)).map(h=>[h.name,String(h.phone||''),num(h.balance)]);
+      return {dated:false,head:['Hotel','Phone','Balance due'],rows,foot:['Total','',sum(rows,r=>r[2])]};
+    }
+    case 'pays': {
+      const rows=[...pays].sort(byDate).map(p=>[String(p.date).slice(0,10),p.hotelName,String(p.note||''),num(p.amount)]);
+      return {dated:true,head:['Date','Hotel','Note','Amount'],rows,foot:['Total','','',sum(pays,p=>p.amount)]};
+    }
+    default: {
+      const sales=sum(ords,o=>o.total), cost=sum(ords,cogs), gp=sales-cost;
+      return {dated:true,head:['Description','Amount ('+CUR+')'],foot:null,rows:[
+        ['Number of invoices',ords.length],['Sales',sales],['Cost of goods sold',cost],['Gross profit',gp],
+        ['Gross margin',sales?(gp/sales*100).toFixed(1)+'%':'—'],['Collections received',sum(pays,p=>p.amount)],
+        ['Receivables (now)',sum(DB.hotels,h=>h.balance)],['Stock value at cost (now)',sum(DB.products,p=>num(p.qty)*num(p.cost))]]};
+    }
+  }
+}
+function rpTable(r){
+  const c=v=>typeof v==='number'?qtyFmt(v):esc(v);
+  const body=r.rows.length?r.rows.map(x=>`<tr>${x.map(v=>`<td>${c(v)}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${r.head.length}" style="text-align:center;color:#6b7a74;padding:20px">No data for this period</td></tr>`;
+  return `<table class="st"><thead><tr>${r.head.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${body}</tbody>${r.foot?`<tfoot><tr>${r.foot.map(v=>`<th>${c(v)}</th>`).join('')}</tr></tfoot>`:''}</table>`;
+}
+function vReports(m){
+  const r=rpData();
+  m.innerHTML=`
+  <div class="rdate"><div><label>From</label><input type="date" value="${rp.from}" onchange="rp.from=this.value;render()"></div><div><label>To</label><input type="date" value="${rp.to}" onchange="rp.to=this.value;render()"></div></div>
+  <div class="chips"><span class="chip" onclick="rpPreset('today')">Today</span><span class="chip" onclick="rpPreset('month')">This month</span><span class="chip" onclick="rpPreset('all')">All dates</span></div>
+  <div class="chips">${Object.keys(RP_TYPES).map(k=>`<span class="chip ${rp.type===k?'act':''}" onclick="rp.type='${k}';render()">${RP_TYPES[k]}</span>`).join('')}</div>
+  <div class="box"><div class="sec" style="margin:0 0 2px">${RP_TYPES[rp.type]} report</div>
+    <p style="margin-bottom:8px">${r.dated?rpPeriod():'Current position (not affected by dates)'}</p>
+    <div class="scroll">${rpTable(r)}</div>
+    <div class="btns"><button class="btn p" onclick="rpPrint()">🖨️ Print / PDF</button><button class="btn s" onclick="rpCSV()">⬇️ Excel (CSV)</button></div>
+  </div>`;
+}
+function rpPrint(){
+  const r=rpData(), w=window.open('','_blank');
+  w.document.write(`<html><head><meta charset="utf-8"><title>${APP} - ${RP_TYPES[rp.type]}</title><style>body{font-family:Poppins,Cairo,Arial;padding:24px}h2{margin:0 0 4px}table{width:100%;border-collapse:collapse;margin-top:14px}td,th{border:1px solid #ccc;padding:7px;text-align:left}td{unicode-bidi:plaintext}thead th{background:#0b3b2e;color:#fff}tfoot th{background:#eef3f1}</style></head><body>
+  <h2>${APP} — ${RP_TYPES[rp.type]} report</h2><div>${r.dated?'Period: '+rpPeriod():'Current position'} &nbsp;|&nbsp; Printed: ${now()}</div>${rpTable(r)}</body></html>`);
+  w.document.close(); setTimeout(()=>w.print(),400);
+}
+function rpCSV(){
+  const r=rpData(), q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const lines=[r.head,...r.rows,...(r.foot?[r.foot]:[])].map(x=>x.map(q).join(','));
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));
+  a.download=`el-sama-${rp.type}-${now().slice(0,10)}.csv`; a.click();
+}
+
+/* ================= Settings ================= */
+function vSettings(m){
+  const on=!!API.url();
+  m.innerHTML=`
+  <div class="box">
+    <div class="sec" style="margin:0 0 8px">🔗 Google Sheets connection</div>
+    <p>Current mode: <b style="color:${on?'#1b7a4f':'#a46a00'}">${on?'Connected to Google Sheets':'Local (data stored on this device only)'}</b></p>
+    <div class="f" style="margin-top:10px"><label>Apps Script Web App URL</label><input id="su" placeholder="https://script.google.com/macros/s/.../exec" value="${esc(API.url())}"></div>
+    <div class="f"><label>Security token (optional — same as TOKEN in Code.gs)</label><input id="st" value="${esc(API.token())}"></div>
+    <div class="btns"><button class="btn p" onclick="saveConn()">Save &amp; test</button>${on?'<button class="btn s" onclick="uploadLocal()">Upload local data</button>':''}</div>
+  </div>
+  <div class="box">
+    <div class="sec" style="margin:0 0 8px">💾 Backup</div>
+    <p>Items: ${DB.products.length} · Hotels: ${DB.hotels.length} · Orders: ${DB.orders.length} · Payments: ${DB.payments.length}</p>
+    <div class="btns"><button class="btn s" onclick="backup()">Download JSON backup</button><button class="btn d" onclick="clearLocal()">Clear local data</button></div>
+  </div>
+  <div class="box"><div class="btns" style="margin:0"><button class="btn d" onclick="logout()">Sign out</button></div></div>`;
+}
+async function saveConn(){
+  if(!API.url() && (DB.products.length||DB.hotels.length||DB.orders.length||DB.payments.length)) localStorage.setItem('gdb_local_backup', JSON.stringify(DB));
+  localStorage.setItem('gs_url',$('#su').value.trim()); localStorage.setItem('gs_token',$('#st').value.trim());
+  if(!API.url()){ setDot(''); render(); return toast('Switched to local mode'); }
+  await sync(true); render();
+}
+async function uploadLocal(){
+  let local; try{ local=JSON.parse(localStorage.getItem('gdb_local_backup')||'null'); }catch{}
+  const src=local||DB;
+  if(!confirm('All data stored on this device will be added to Google Sheets. Continue?')) return;
+  const ops=[]; ['products','hotels','orders','payments'].forEach(s=>(src[s]||[]).forEach(r=>ops.push({action:'add',sheet:s,data:r})));
+  if(!ops.length) return toast('No local data found');
+  commit(ops,ops.length+' records uploaded ✓');
+}
+function backup(){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'})); a.download='el-sama-backup-'+now().slice(0,10)+'.json'; a.click(); }
+function clearLocal(){ if(!confirm('Delete all data from this device?')) return; localStorage.removeItem('gdb'); DB={products:[],hotels:[],orders:[],payments:[]}; render(); toast('Cleared'); }
+
+/* ================= Start ================= */
+// Keep a copy of local data before the first connection so it can be uploaded later
+if(!localStorage.getItem('gs_url') && localStorage.getItem('gdb')) localStorage.setItem('gdb_local_backup', localStorage.getItem('gdb'));
+if(localStorage.getItem('auth')||sessionStorage.getItem('auth')) enterApp();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
