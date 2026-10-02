@@ -173,7 +173,14 @@ const safeStore=n=>{try{const s=window[n];s.setItem('__t','1');s.removeItem('__t
 const LS=safeStore('localStorage'), SS=safeStore('sessionStorage');
 
 /* ================= Login settings ================= */
+// Paste your Apps Script Web App link (ends with /exec) between the quotes so every device connects automatically:
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLpkvBPj42iyXcBcoDcq2zYS2xOie6bp926fKf4qryMSeD3eW2GJJzLaFqomd50t2g/exec';
+// Security token — must be the same as TOKEN in Code.gs:
+const SCRIPT_TOKEN = '1419';
+// Built-in login, used only while the app is NOT connected to Google Sheets:
 const USER = 'admin', PASS = '123';
+let ME = null;   // signed-in user {u, p, role}
+const h53 = s => { let a=0xdeadbeef, b=0x41c6ce57; for(let i=0;i<s.length;i++){ const c=s.charCodeAt(i); a=Math.imul(a^c,2654435761); b=Math.imul(b^c,1597334677); } a=Math.imul(a^(a>>>16),2246822507)^Math.imul(b^(b>>>13),3266489909); b=Math.imul(b^(b>>>16),2246822507)^Math.imul(a^(a>>>13),3266489909); return (4294967296*(2097151&b)+(a>>>0)).toString(36); };
 const APP = 'El-Sama';
 const CUR = 'EGP';
 const UNITS = ['kg','carton','can','liter','piece','sack','box','pack','dozen'];
@@ -194,18 +201,23 @@ function toast(m){ const t=document.createElement('div'); t.className='toast'; t
 function setDot(s){ $('#dot').className='dot '+(s||''); }
 
 /* ================= Data ================= */
-let DB = {products:[],hotels:[],orders:[],payments:[]};
-function loadCache(){ try{ const d=JSON.parse(LS.getItem('gdb')||'null'); if(d) DB=Object.assign({products:[],hotels:[],orders:[],payments:[]},d); }catch{} }
+const EMPTY = () => ({products:[],hotels:[],orders:[],payments:[],users:[]});
+let DB = EMPTY();
+function loadCache(){ try{ const d=JSON.parse(LS.getItem('gdb')||'null'); if(d) DB=Object.assign(EMPTY(),d); }catch{} }
 function saveCache(){ LS.setItem('gdb', JSON.stringify(DB)); }
-function setData(d){ DB = Object.assign({products:[],hotels:[],orders:[],payments:[]}, d||{}); saveCache(); }
+function setData(d){ DB = Object.assign(EMPTY(), d||{}); saveCache(); }
 
 const API = {
-  url: () => (LS.getItem('gs_url')||'').trim(),
-  token: () => (LS.getItem('gs_token')||'').trim(),
-  async call(body){
-    const r = await fetch(API.url(), {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({...body, token:API.token()})});
+  url: () => (LS.getItem('gs_url')||SCRIPT_URL||'').trim(),
+  lastMe: null,
+  token: () => (LS.getItem('gs_token')||SCRIPT_TOKEN||'').trim(),
+  async call(body, cred){
+    const c = cred || ME || {};
+    const r = await fetch(API.url(), {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({...body, token:API.token(), user:c.u||'', pass:c.p||''})});
     const j = await r.json();
-    if(!j.ok) throw new Error(j.error||'Unknown error');
+    if(!j.ok){ const e=new Error(j.error||'Unknown error'); e.server=true; throw e; }
+    API.lastMe = j.me || null;
+    if(j.me && ME && !cred){ ME.role=j.me.role; }
     return j.data;
   }
 };
@@ -214,7 +226,7 @@ async function sync(manual){
   if(!API.url()){ setDot(''); if(manual) toast('Local mode — add your Google Sheet link in Settings'); return; }
   setDot('busy');
   try{ setData(await API.call({action:'all'})); setDot('on'); render(); if(manual) toast('Synced ✓'); }
-  catch(e){ setDot('err'); if(manual) toast('Connection failed: '+e.message); }
+  catch(e){ setDot('err'); if(e.server && e.message==='AUTH'){ toast('Your login is no longer valid'); return setTimeout(()=>logout(true),1200); } if(manual) toast('Connection failed: '+e.message); }
 }
 
 function applyLocal(op){
@@ -240,19 +252,38 @@ async function commit(ops, msg){
 
 /* ================= Login ================= */
 $('#eye').onclick = () => { const p=$('#p'); p.type = p.type==='password' ? 'text' : 'password'; };
-function doLogin(){
-  if($('#u').value.trim().toLowerCase()===USER && $('#p').value===PASS){
-    ($('#rem').checked ? LS : SS).setItem('auth','1');
-    enterApp();
-  } else {
-    const c=$('#lform'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake');
-    $('#lerr').textContent='Incorrect username or password';
+let logging=false;
+function loginFail(m){ const c=$('#lform'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); $('#lerr').textContent=m; }
+function startSession(me){ ME=me; SS.removeItem('auth'); LS.removeItem('auth'); ($('#rem').checked ? LS : SS).setItem('auth',JSON.stringify(me)); $('#lerr').textContent=''; enterApp(); }
+async function doLogin(){
+  if(logging) return;
+  const u=$('#u').value.trim().toLowerCase(), p=$('#p').value;
+  if(!u||!p) return loginFail('Enter username and password');
+  loadCache();
+  if(API.url()){
+    logging=true; $('#lbtn').textContent='Signing in…';
+    try{
+      const d=await API.call({action:'all'},{u,p});
+      let role='admin';
+      if(API.lastMe) role=API.lastMe.role||'user';
+      else if(!(u===USER && p===PASS)) return loginFail('Incorrect username or password');   // old Code.gs without users
+      setData(d); LS.setItem('auth_cache',h53(u+':'+p)+'|'+role);
+      return startSession({u,p,role});
+    }catch(e){
+      if(e.server) return loginFail(e.message==='AUTH'?'Incorrect username or password':e.message);
+      const [hh,role]=(LS.getItem('auth_cache')||'').split('|');
+      if(hh && hh===h53(u+':'+p)) return startSession({u,p,role:role||'user'});   // offline, known user
+      return loginFail('No internet connection');
+    }finally{ logging=false; $('#lbtn').textContent='Sign In'; }
   }
+  const lu=DB.users.find(x=>String(x.username).toLowerCase()===u);
+  if(lu ? (String(lu.password)===p && lu.active!=='no') : (u===USER && p===PASS)) return startSession({u,p,role:lu?lu.role:'admin'});
+  loginFail('Incorrect username or password');
 }
 $('#lbtn').addEventListener('click', doLogin);
 ['#u','#p'].forEach(s=>$(s).addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); }));
 function enterApp(){ $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); loadCache(); go('home'); sync(); }
-function logout(){ if(!ask('Sign out?')) return; LS.removeItem('auth'); SS.removeItem('auth'); location.reload(); }
+function logout(force){ if(force!==true && !ask('Sign out?')) return; LS.removeItem('auth'); SS.removeItem('auth'); ME=null; try{ location.reload(); }catch(e){} $('#app').classList.add('hidden'); $('#login').classList.remove('hidden'); $('#p').value=''; }
 
 /* ================= Navigation ================= */
 const TITLES={home:APP,products:'Stock & Items',orders:'Supply Orders',hotels:'Hotels & Customers',reports:'Reports',settings:'Settings'};
@@ -287,7 +318,7 @@ function vHome(m){
   const pending=DB.orders.filter(o=>!isDone(o)).length;
   const recent=[...DB.orders].sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,5);
   m.innerHTML=`
-  <div class="hello"><b>Welcome, admin 👋</b><small>${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</small></div>
+  <div class="hello"><b>Welcome, ${esc(ME?ME.u:'')} 👋</b><small>${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</small></div>
   <div class="stats">
     <div class="stat hl"><small>Today's sales</small><b>${money(sales)}</b></div>
     <div class="stat"><small>Stock value (at cost)</small><b>${money(stock)}</b></div>
@@ -579,11 +610,60 @@ function rpCSV(){
   a.download=`el-sama-${rp.type}-${now().slice(0,10)}.csv`; a.click();
 }
 
+/* ================= Users ================= */
+const isAdmin = () => !!ME && ME.role==='admin';
+function userList(){
+  const builtin = !API.url() && !DB.users.some(x=>String(x.username).toLowerCase()===USER);
+  return [...(builtin?[{id:'',username:USER,role:'admin',active:'yes',builtin:true}]:[]), ...DB.users];
+}
+function usersBox(){
+  return `<div class="box"><div class="sec" style="margin:0 0 10px">👥 Users</div>
+    ${userList().map(x=>`<div class="card" style="box-shadow:none;border:1px solid #eef2f0;padding:10px 12px" onclick="${x.builtin?"toast('Built-in admin — connect Google Sheets to manage it')":`userForm('${x.id}')`}">
+      <div class="av">${esc(String(x.username).charAt(0).toUpperCase())}</div>
+      <div class="info"><b>${esc(x.username)}</b><small>${x.role==='admin'?'Admin':'User'}${x.builtin?' · built-in':''}</small></div>
+      <div class="end"><span class="tag ${x.active==='no'?'low':'ok'}">${x.active==='no'?'Disabled':'Active'}</span></div></div>`).join('')}
+    <div class="btns" style="margin-top:6px"><button class="btn p" onclick="userForm()">+ Add user</button></div></div>`;
+}
+function userForm(id){
+  const x=DB.users.find(v=>String(v.id)===String(id)) || {username:'',role:'user',active:'yes'};
+  openModal(id?'Edit user':'New user',`
+    <div class="f"><label>Username</label><input id="un" autocapitalize="off" value="${esc(x.username)}"></div>
+    <div class="f"><label>${id?'New password (leave empty to keep the current one)':'Password'}</label><input id="up" type="text"></div>
+    <div class="g2">
+      <div class="f"><label>Role</label><select id="ur"><option value="user" ${x.role!=='admin'?'selected':''}>User</option><option value="admin" ${x.role==='admin'?'selected':''}>Admin</option></select></div>
+      <div class="f"><label>Status</label><select id="ua"><option value="yes" ${x.active!=='no'?'selected':''}>Active</option><option value="no" ${x.active==='no'?'selected':''}>Disabled</option></select></div>
+    </div>
+    <p style="font-size:12px;color:var(--mut)">Admin: everything + users &amp; connection. User: stock, orders, hotels, reports.</p>
+    <div class="btns"><button class="btn p" onclick="saveUser('${id||''}')">Save</button>${id?`<button class="btn d" onclick="delUser('${id}')">Delete</button>`:''}</div>`);
+}
+async function saveUser(id){
+  const old=DB.users.find(v=>String(v.id)===String(id));
+  const d={id:id||uid(),username:$('#un').value.trim().toLowerCase(),role:$('#ur').value,active:$('#ua').value,updated:now()};
+  const pw=$('#up').value;
+  if(!d.username) return toast('Enter a username');
+  if(/\s/.test(d.username)) return toast('Username cannot contain spaces');
+  if(!id && !pw) return toast('Enter a password');
+  if(pw && pw.length<3) return toast('Password is too short');
+  if(DB.users.some(v=>String(v.id)!==String(d.id) && String(v.username).toLowerCase()===d.username)) return toast('This username already exists');
+  const self = old && ME && String(old.username).toLowerCase()===ME.u;
+  if(self && (d.role!=='admin' || d.active==='no')) return toast('You cannot remove your own admin access');
+  if(pw) d.password=pw;
+  const ok=await commit([{action:id?'update':'add',sheet:'users',data:d}],'User saved ✓');
+  if(ok && self){ ME.u=d.username; if(pw) ME.p=pw; const st=LS.getItem('auth')?LS:SS; st.setItem('auth',JSON.stringify(ME)); LS.setItem('auth_cache',h53(ME.u+':'+ME.p)+'|'+ME.role); }
+}
+function delUser(id){
+  const x=DB.users.find(v=>String(v.id)===String(id)); if(!x) return;
+  if(ME && String(x.username).toLowerCase()===ME.u) return toast('You cannot delete your own account');
+  if(ask('Delete user "'+x.username+'"?')) commit([{action:'delete',sheet:'users',data:{id}}],'User deleted');
+}
+
 /* ================= Settings ================= */
 function vSettings(m){
-  const on=!!API.url();
+  const on=!!API.url(), adm=isAdmin();
   m.innerHTML=`
-  <div class="box">
+  <div class="box"><p>Signed in as <b style="color:var(--txt)">${esc(ME.u)}</b> · ${adm?'Admin':'User'}</p></div>
+  ${adm?usersBox():''}
+  <div class="box ${adm?'':'hidden'}">
     <div class="sec" style="margin:0 0 8px">🔗 Google Sheets connection</div>
     <p>Current mode: <b style="color:${on?'#1b7a4f':'#a46a00'}">${on?'Connected to Google Sheets':'Local (data stored on this device only)'}</b></p>
     <div class="f" style="margin-top:10px"><label>Apps Script Web App URL</label><input id="su" placeholder="https://script.google.com/macros/s/.../exec" value="${esc(API.url())}"></div>
@@ -612,12 +692,13 @@ async function uploadLocal(){
   commit(ops,ops.length+' records uploaded ✓');
 }
 function backup(){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'})); a.download='el-sama-backup-'+now().slice(0,10)+'.json'; a.click(); }
-function clearLocal(){ if(!ask('Delete all data from this device?')) return; LS.removeItem('gdb'); DB={products:[],hotels:[],orders:[],payments:[]}; render(); toast('Cleared'); }
+function clearLocal(){ if(!ask('Delete all data from this device?')) return; LS.removeItem('gdb'); DB=EMPTY(); render(); toast('Cleared'); }
 
 /* ================= Start ================= */
 // Keep a copy of local data before the first connection so it can be uploaded later
 if(!LS.getItem('gs_url') && LS.getItem('gdb')) LS.setItem('gdb_local_backup', LS.getItem('gdb'));
-if(LS.getItem('auth')||SS.getItem('auth')) enterApp();
+try{ ME=JSON.parse(LS.getItem('auth')||SS.getItem('auth')||'null'); }catch(e){ ME=null; }
+if(ME && ME.u) enterApp(); else ME=null;
 try{ if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}
 </script>
 </body>
